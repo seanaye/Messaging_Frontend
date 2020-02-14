@@ -1,0 +1,8 @@
+query token {
+    token {
+        ok
+        error
+        access
+        refresh
+    }
+}

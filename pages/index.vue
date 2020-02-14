@@ -1,92 +1,135 @@
 <template>
-  <v-layout
-    column
-    justify-center
-    align-center
-  >
-    <v-flex
-      xs12
-      sm8
-      md6
-    >
-      <div class="text-center">
-        <logo />
-        <vuetify-logo />
-      </div>
-      <v-card>
-        <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
+  <v-container>
+    <v-row align="center" justify="center" style="height: 100vh;">
+      <v-card class="pa-4">
+        <v-card-title>
+          <h3>Create Account</h3>
         </v-card-title>
-        <v-card-text>
-          <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
-          <p>
-            For more information on Vuetify, check out the <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-            >
-              documentation
-            </a>.
-          </p>
-          <p>
-            If you have questions, please join the official <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              title="chat"
-            >
-              discord
-            </a>.
-          </p>
-          <p>
-            Find a bug? Report it on the github <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              title="contribute"
-            >
-              issue board
-            </a>.
-          </p>
-          <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3">
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-          >
-            Nuxt Documentation
-          </a>
-          <br>
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-          >
-            Nuxt GitHub
-          </a>
-        </v-card-text>
         <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            nuxt
-            to="/inspire"
-          >
-            Continue
-          </v-btn>
+          <v-form v-model="valid" ref="form">
+            <v-container>
+              <v-row align="center" justify="center">
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="username"
+                    label="Username"
+                    :rules="[rules.required]"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="password1"
+                    :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+                    :rules="[rules.required, rules.min]"
+                    :type="showPass ? 'text' : 'password'"
+                    label="Password"
+                    @click:append="showPass = !showPass"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="password2"
+                    :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
+                    :rules="[rules.required, rules.min, rules.match]"
+                    :type="showPass ? 'text' : 'password'"
+                    label="Confirm Password"
+                    @click:append="showPass = !showPass"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-btn @click="createAccount" :loading="loading" :disabled="!valid">Create Account</v-btn>
+                  <v-fade-transition>
+                    <div v-if="error" style="color: red">{{error}}</div>
+                  </v-fade-transition>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-form>
         </v-card-actions>
       </v-card>
-    </v-flex>
-  </v-layout>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
+import jwtDecode from 'jwt-decode'
+import createUser from '~/apollo/mutation/createUser'
+import login from '~/apollo/query/login'
 
 export default {
-  components: {
-    Logo,
-    VuetifyLogo
+  layout: 'blank',
+  data () {
+    return {
+      showPass: false,
+      username: '',
+      password1: '',
+      password2: '',
+      rules: {
+        required: val => !!val || 'Required',
+        min: val => val.length >= 8 || 'Minimum 8 Characters',
+        match: val => (val === this.password1 && val === this.password2) || 'Passwords Must Match'
+      },
+      loading: false,
+      error: '',
+      valid: false
+    }
+  },
+  computed: {
+    loggedInUser () {
+      return this.$store.state.user
+    }
+  },
+  watch: {
+    loggedInUser () {
+      if (this.loggedInUser) {
+        this.$router.push('/chat')
+      }
+    }
+  },
+  methods: {
+    async createAccount () {
+      const isValid = this.$refs.form.validate()
+      if (isValid) {
+        this.loading = true
+        const res = await this.$apollo.mutate({
+          mutation: createUser,
+          variables: {
+            username: this.username,
+            password: this.password2
+          }
+        })
+        console.log(res)
+        if (res.data?.createUser?.ok) {
+          this.login()
+        } else {
+          this.error = res.data?.createUser?.error || 'An error has occured'
+          this.loading = false
+        }
+      }
+    },
+    async login () {
+      const res = await this.$apollo.query({
+        query: login,
+        variables: {
+          username: this.username,
+          password: this.password2
+        }
+      })
+      console.log(res)
+      this.loading = false
+      if (res.data?.login?.ok) {
+        const token = jwtDecode(res.data.login.refresh)
+        const expiry = new Date(token.exp * 1000)
+        document.cookie = `ea9dfed74921e99adbbb:${res.data.login.refresh};${expiry.toUTCString()}`
+        this.$store.commit('M_LOGIN', {
+          access: res.data.login.access,
+          username: token.user
+        })
+        await this.$apolloHelpers.onLogin(res.data.login.access)
+      } else {
+        this.error = res.data?.login?.error || 'An error has occured'
+      }
+    }
   }
 }
 </script>

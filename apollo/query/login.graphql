@@ -1,0 +1,8 @@
+query login($username:String! $password: String!) {
+    login(user: $username password: $password) {
+        ok
+        error
+        access
+        refresh
+    }
+}

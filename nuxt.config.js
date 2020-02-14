@@ -44,8 +44,25 @@ export default {
   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/apollo'
   ],
+  apollo: {
+    includeNodeModules: true,
+    cookieAttributes: {
+      secure: true
+    },
+    clientConfigs: {
+      default: {
+        httpEndpoint: 'https://mc.seanaye.ca/graphql/',
+        wsEndpoint: 'wss://mc.seanaye.ca/graphql/'
+      }
+    }
+  },
+  pageTransition: {
+    name: 'fade-transition',
+    mode: 'out-in'
+  },
   /*
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options
@@ -59,7 +76,7 @@ export default {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      dark: true,
+      dark: false,
       themes: {
         dark: {
           primary: colors.blue.darken2,

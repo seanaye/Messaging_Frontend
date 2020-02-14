@@ -1,0 +1,12 @@
+query getMessages($chat: String! $last: Int!){
+    getMessages(chat: $chat last: $last) {
+        ok
+        error
+        messages {
+            time
+            message
+            user
+            _id
+        }
+    }
+}

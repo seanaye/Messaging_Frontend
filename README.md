@@ -20,3 +20,11 @@ $ npm run generate
 ```
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+
+### TODO
+
+- Parameterize login and add to store
+- await actions for determining load state
+- refresh token on new session
+- add vuetify presets
+
