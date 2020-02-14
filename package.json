@@ -1,30 +1,30 @@
 {
   "name": "messaging_frontend",
   "version": "1.0.0",
+  "private": true,
   "description": "My tiptop Nuxt.js project",
   "author": "Sean Aye",
-  "private": true,
   "scripts": {
-    "dev": "nuxt",
     "build": "nuxt build",
-    "start": "nuxt start",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "dev": "nuxt",
     "generate": "nuxt generate",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
+    "start": "nuxt start"
   },
   "dependencies": {
     "@nuxtjs/apollo": "^4.0.0-rc19",
     "@nuxtjs/axios": "^5.3.6",
     "graphql-tag": "^2.10.3",
     "jwt-decode": "^2.2.0",
-    "nuxt": "^2.0.0",
-    "vue-cli-plugin-vuetify-preset-reply": "^1.0.3"
+    "nuxt": "^2.0.0"
   },
   "devDependencies": {
-    "@nuxtjs/vuetify": "^1.0.0",
     "@nuxtjs/eslint-config": "^2.0.0",
     "@nuxtjs/eslint-module": "^1.0.0",
+    "@nuxtjs/vuetify": "^1.0.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.1.0",
-    "eslint-plugin-nuxt": ">=0.4.2"
+    "eslint-plugin-nuxt": ">=0.4.2",
+    "vue-cli-plugin-vuetify-preset-reply": "~1.0.3"
   }
 }

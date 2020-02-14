@@ -1,4 +1,5 @@
 import colors from 'vuetify/es5/util/colors'
+// import { preset } from 'vue-cli-plugin-vuetify-preset-reply/preset'
 
 export default {
   mode: 'spa',
@@ -48,20 +49,23 @@ export default {
     '@nuxtjs/apollo'
   ],
   apollo: {
+    credentials: 'include',
     includeNodeModules: true,
     cookieAttributes: {
-      secure: true
+      secure: true,
+      expires: 7,
+      domain: 'mc.seanaye.ca'
     },
     clientConfigs: {
-      default: {
-        httpEndpoint: 'https://mc.seanaye.ca/graphql/',
-        wsEndpoint: 'wss://mc.seanaye.ca/graphql/'
-      }
+      default: '~/plugins/apolloSetup'
     }
   },
   pageTransition: {
     name: 'fade-transition',
     mode: 'out-in'
+  },
+  router: {
+    middleware: 'validateSession'
   },
   /*
   ** Axios module configuration
@@ -75,6 +79,7 @@ export default {
   */
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
+    // preset,
     theme: {
       dark: false,
       themes: {

@@ -1,0 +1,6 @@
+mutation addMessage($chat: String! $msg: String!) {
+    addMessage(chat: $chat message: $msg) {
+        ok
+        error
+    }
+}

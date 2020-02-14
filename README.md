@@ -27,4 +27,4 @@ For detailed explanation on how things work, check out [Nuxt.js docs](https://nu
 - await actions for determining load state
 - refresh token on new session
 - add vuetify presets
-
+- check origin settings of cookie

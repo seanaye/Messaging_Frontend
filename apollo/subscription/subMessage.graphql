@@ -1,0 +1,11 @@
+subscription subMessage($chat: String! $access: String!) {
+    subMessage(chat: $chat accessToken: $access) {
+        ok
+        message {
+            message
+            time
+            user
+            _id
+        }
+    }
+}
