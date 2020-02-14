@@ -1,6 +1,6 @@
 export default async function ({ store, redirect, route }) {
   console.log(route)
-  let matchedRoute
+  let authenticated
   if (!store.getters.accessValid) {
     console.log('access not valid loading refresh')
     store.commit('LOAD_REFRESH', localStorage.getItem('ea9dfed74921e99adbbb'))
@@ -9,22 +9,24 @@ export default async function ({ store, redirect, route }) {
       await store.dispatch('getAccess')
       if (!store.getters.accessValid) {
         console.log('access not valid')
-        matchedRoute = '/'
+        authenticated = false
       } else {
         console.log('new access token valid')
-        matchedRoute = '/chat'
+        authenticated = true
       }
     } else {
       console.log('refresh not valid, removing')
       localStorage.removeItem('ea9dfed74921e99adbbb')
-      matchedRoute = '/'
+      authenticated = false
     }
   } else {
-    matchedRoute = '/chat'
+    authenticated = true
   }
 
-  console.log(matchedRoute)
-  if (route.path !== matchedRoute) {
-    return redirect(matchedRoute)
+  console.log(authenticated)
+  if (!authenticated && route.path === '/chat') {
+    return redirect('/')
+  } else if (authenticated && route.path !== '/chat') {
+    return redirect('/chat')
   }
 }

@@ -3,7 +3,7 @@
     <v-row align="center" justify="center" style="height: 100vh;">
       <v-card class="pa-4">
         <v-card-title>
-          <h3>Create Account</h3>
+          <h3>Login</h3>
         </v-card-title>
         <v-card-actions>
           <v-form v-model="valid" ref="form">
@@ -28,6 +28,7 @@
                 </v-col>
                 <v-col cols="12">
                   <v-btn @click="login" :loading="loading" :disabled="!valid" color="primary">Login</v-btn>
+                  <div>Dont have an account? <nuxt-link to="/signup">create one</nuxt-link></div>
                 </v-col>
               </v-row>
             </v-container>
