@@ -24,9 +24,9 @@ export default async function ({ store, redirect, route }) {
   }
 
   console.log(authenticated)
-  if (!authenticated && route.path === '/chat') {
+  if (!authenticated && route.path.includes('/chat')) {
     return redirect('/')
-  } else if (authenticated && route.path !== '/chat') {
+  } else if (authenticated && !route.path.includes('/chat')) {
     return redirect('/chat')
   }
 }
