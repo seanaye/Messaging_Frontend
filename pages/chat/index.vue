@@ -8,7 +8,7 @@
             :key="msg._id"
             :left="msg.thisUser"
             :right="!msg.thisUser"
-            :color="(msg.thisUser) ? 'primary': 'secondary'"
+            :color="(msg.thisUser) ? 'primary': 'success'"
           >
             <span slot="opposite">
               {{(i > 0 && messages[i-1].user === msg.user) ? '' : msg.user}} {{msg.time}} {{(i > 0 && messages[i-1].user === msg.user) ?  '' : msg.timeZone}}

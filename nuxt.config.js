@@ -102,6 +102,10 @@ export default {
     /*
     ** You can extend webpack config here
     */
+    vendor: ['babel-polyfill'],
+    babel: {
+      plugins: ['@babel/syntax-optional-chaining']
+    },
     extend (config, ctx) {
     }
   }
