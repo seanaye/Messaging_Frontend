@@ -27,6 +27,7 @@ export default async function ({ store, redirect, route }) {
   if (!authenticated && route.path.includes('/chat')) {
     return redirect('/')
   } else if (authenticated && !route.path.includes('/chat')) {
+    console.log('path doesn include chat')
     return redirect('/chat')
   }
 }

@@ -2,7 +2,10 @@
   <v-container fluid style="height: 100%">
     <v-row justify="center" align="start" style="height: 100%">
       <v-col v-if="thisUser" cols="12" md="10" lg="8">
-        <v-timeline>
+        <v-timeline
+          :dense="$vuetify.breakpoint.smAndDown"
+          :reverse="$vuetify.breakpoint.smAndDown"
+        >
           <v-timeline-item
             v-for="(msg, i) in messages"
             :key="msg._id"
@@ -106,7 +109,6 @@ export default {
   mounted () {
     this.queryMessages()
     this.subscribe()
-    this.$vuetify.goTo(this.$refs.msgBox, { duration: 400 })
   },
   methods: {
     async queryMessages () {
@@ -122,6 +124,8 @@ export default {
       } else {
         await this.$store.dispatch('getAccess')
       }
+      await this.$nextTick()
+      this.$vuetify.goTo(this.$refs.msgBox, { duration: 800 })
     },
     subscribe () {
       const observer = this.$apollo.subscribe({
