@@ -17,11 +17,11 @@
     <v-content>
       <nuxt></nuxt>
     </v-content>
-    <v-footer fixed app padless>
+    <v-footer absolute app padless>
       <v-card flat tile class="text-center" color="primary" width="100%">
-        <v-card-title>
+        <v-card-text>
           <span style="color: white">Made with ❤️ - Sean Aye 2020</span>
-        </v-card-title>
+        </v-card-text>
       </v-card>
     </v-footer>
   </v-app>
