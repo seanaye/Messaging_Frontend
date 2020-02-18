@@ -1,28 +1,15 @@
 <template>
-  <v-timeline
-    dense
-    reverse
-  >
+  <v-timeline>
     <v-timeline-item
-      v-for="msg in messages"
+      v-for="(msg, i) in messages"
       :key="msg._id"
       :left="msg.thisUser"
       :right="!msg.thisUser"
       :color="(msg.thisUser) ? 'primary': 'success'"
     >
-      <template v-slot:icon>
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <div
-              v-on="on"
-              style="height: 100%; width: 100%;"
-            ></div>
-          </template>
-          <span>
-            {{msg.user}} {{msg.date}} {{msg.time}} {{msg.timeZone}}
-          </span>
-        </v-tooltip>
-      </template>
+      <span slot="opposite">
+        {{(i > 0 && messages[i-1].user === msg.user) ? '' : msg.user}} {{msg.time}} {{(i > 0 && messages[i-1].user === msg.user) ?  '' : msg.timeZone}}
+      </span>
       <v-card class="elevation-2">
         <v-card-text>{{msg.message}}</v-card-text>
       </v-card>
@@ -46,17 +33,19 @@
                 shaped
                 dense
               >
-                <template v-slot:append-icon>
-                  <v-btn
-                    :disabled="newMessage.length === 0"
-                    :loading="loading"
-                    @click="$emit('sendMsg')"
-                    @keydown.enter="$emit('sendMsg')"
-                    color="primary"
-                  >
-                  </v-btn>
-                </template>
               </v-textarea>
+            </v-col>
+            <v-col>
+              <v-spacer></v-spacer>
+              <v-btn
+                :disabled="newMessage.length === 0"
+                :loading="loading"
+                @click="$emit('sendMsg')"
+                @keydown.enter="$emit('sendMsg')"
+                color="primary"
+              >
+                Send
+              </v-btn>
             </v-col>
           </v-row>
         </v-card-actions>

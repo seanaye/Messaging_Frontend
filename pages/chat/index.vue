@@ -1,63 +1,22 @@
 <template>
   <v-container fluid style="height: 100%">
+    <v-snackbar v-model="acknoledge" top>
+      Tap on message nodes to view delivery time
+      <v-btn
+        color="error"
+        text
+        @click="hasAcknoledged"
+      >
+        Dont show again
+      </v-btn>
+    </v-snackbar>
     <v-row justify="center" align="start" style="height: 100%">
       <v-col v-if="thisUser" cols="12" md="10" lg="8">
-        <v-timeline
-          :dense="$vuetify.breakpoint.smAndDown"
-          :reverse="$vuetify.breakpoint.smAndDown"
-        >
-          <v-timeline-item
-            v-for="(msg, i) in messages"
-            :key="msg._id"
-            :left="msg.thisUser"
-            :right="!msg.thisUser"
-            :color="(msg.thisUser) ? 'primary': 'success'"
-          >
-            <span slot="opposite">
-              {{(i > 0 && messages[i-1].user === msg.user) ? '' : msg.user}} {{msg.time}} {{(i > 0 && messages[i-1].user === msg.user) ?  '' : msg.timeZone}}
-            </span>
-            <v-card class="elevation-2">
-              <v-card-text>{{msg.message}}</v-card-text>
-            </v-card>
-          </v-timeline-item>
-          <v-timeline-item
-            left
-            color="primary"
-          >
-            <v-card class="elevation-2">
-              <v-card-actions>
-                <v-row justify="end" no-gutters>
-                  <v-col cols="12">
-                    <v-textarea
-                      ref="msgBox"
-                      v-model="newMessage"
-                      label="Say Something"
-                      outlined
-                      autofocus
-                      auto-grow
-                      no-resize
-                      shaped
-                      dense
-                    >
-                    </v-textarea>
-                  </v-col>
-                  <v-col>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      :disabled="newMessage.length === 0"
-                      :loading="loading"
-                      @click="sendMsg"
-                      @keydown.enter="sendMsg"
-                      color="primary"
-                    >
-                      Send
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </v-card-actions>
-            </v-card>
-          </v-timeline-item>
-        </v-timeline>
+        <component
+          :is="($vuetify.breakpoint.smAndDown) ? 'mobileChatTimeline' : 'desktopChatTimeline'"
+          :messages="messages"
+          :loading="loading"
+        ></component>
       </v-col>
       <v-progress-circular
         indeterminate
@@ -72,6 +31,10 @@ import getMessages from '~/apollo/query/getMessages'
 import subMessage from '~/apollo/subscription/subMessage'
 
 export default {
+  components: {
+    desktopChatTimeline: () => import('~/components/desktopChatTimeline'),
+    mobileChatTimeline: () => import('~/components/mobileChatTimeline')
+  },
   data () {
     return {
       loading: false
@@ -91,6 +54,7 @@ export default {
         newObj.user = elem.user
         const d = new Date(elem.time * 1000)
         newObj.timeZone = `${d.toLocaleTimeString('en-us', { timeZoneName: 'short' }).split(' ')[2]}`
+        newObj.date = `${d.getMonth()}/${d.getDate()}/${d.getFullYear()}`
         newObj.time = `${d.getHours()}:${(d.getMinutes() < 10) ? '0' : ''}${d.getMinutes()}`
         newObj.thisUser = elem.user === this.thisUser
         newObj.message = elem.message
@@ -104,6 +68,14 @@ export default {
       set (value) {
         this.$store.commit('M_NEW_MESSAGE', value)
       }
+    },
+    acknoledge: {
+      get () {
+        return !localStorage.getItem('acknoledged')
+      },
+      set (val) {
+        return !val
+      }
     }
   },
   mounted () {
@@ -111,6 +83,10 @@ export default {
     this.subscribe()
   },
   methods: {
+    hasAcknoledged () {
+      localStorage.setItem('acknoledged', 'acknoledged')
+      this.acknoledge = 'acknoloedged'
+    },
     async queryMessages () {
       const res = await this.$apollo.query({
         query: getMessages,
@@ -120,12 +96,12 @@ export default {
         }
       })
       if (res.data?.getMessages?.ok) {
-        this.$store.commit('PUSH_MESSAGE', res.data.getMessages.messages)
+        this.$store.commit('PUSH_MESSAGE', { msgLst: res.data.getMessages.messages, replace: true })
       } else {
         await this.$store.dispatch('getAccess')
       }
       await this.$nextTick()
-      this.$vuetify.goTo(this.$refs.msgBox, { duration: 800 })
+      this.$vuetify.goTo('#msgBox', { duration: 800 })
     },
     subscribe () {
       const observer = this.$apollo.subscribe({
@@ -141,7 +117,7 @@ export default {
           console.log(res)
           console.log(this)
           if (res.data?.subMessage?.ok) {
-            that.$store.commit('PUSH_MESSAGE', [res.data.subMessage.message])
+            that.$store.commit('PUSH_MESSAGE', { msgLst: [res.data.subMessage.message], replace: false })
           }
         },
         error (error) {

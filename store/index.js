@@ -40,8 +40,12 @@ export const mutations = {
       state.refreshExpiry = new Date(token.exp * 1000)
     }
   },
-  PUSH_MESSAGE (state, msgLst) {
-    state.messages = [...state.messages, ...msgLst]
+  PUSH_MESSAGE (state, { msgLst, replace }) {
+    if (replace) {
+      state.messages = msgLst
+    } else {
+      state.messages = [...state.messages, ...msgLst]
+    }
   },
   M_NEW_MESSAGE (state, value) {
     state.newMessage = value
