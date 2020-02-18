@@ -16,6 +16,7 @@
           :is="($vuetify.breakpoint.smAndDown) ? 'mobileChatTimeline' : 'desktopChatTimeline'"
           :messages="messages"
           :loading="loading"
+          @sendMsg="sendMsg"
         ></component>
       </v-col>
       <v-progress-circular

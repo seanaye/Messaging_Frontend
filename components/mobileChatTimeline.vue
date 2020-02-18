@@ -46,7 +46,7 @@
                 shaped
                 dense
               >
-                <template v-slot:append-icon>
+                <template v-slot:append>
                   <v-btn
                     :disabled="newMessage.length === 0"
                     :loading="loading"
@@ -54,6 +54,7 @@
                     @keydown.enter="$emit('sendMsg')"
                     color="primary"
                   >
+                    Send
                   </v-btn>
                 </template>
               </v-textarea>
