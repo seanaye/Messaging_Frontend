@@ -15,7 +15,8 @@
           <template v-slot:activator="{ on }">
             <div
               v-on="on"
-              style="height: 100%; width: 100%;"
+              @click="$emit('on')"
+              style="height: 100%; width: 100%; z-index: 100;"
             ></div>
           </template>
           <span>
@@ -81,6 +82,9 @@ export default {
         this.$store.commit('M_NEW_MESSAGE', value)
       }
     }
+  },
+  mounted () {
+    this.$vuetify.goTo('#msgBox', { duration: 800 })
   }
 }
 </script>

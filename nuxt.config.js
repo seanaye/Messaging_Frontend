@@ -2,6 +2,9 @@ import colors from 'vuetify/es5/util/colors'
 // import { preset } from 'vue-cli-plugin-vuetify-preset-reply/preset'
 
 export default {
+  server: {
+    host: '0.0.0.0'
+  },
   mode: 'spa',
   /*
   ** Headers of the page
@@ -102,7 +105,7 @@ export default {
     /*
     ** You can extend webpack config here
     */
-    vendor: ['babel-polyfill'],
+    // vendor: ['babel-polyfill'],
     babel: {
       plugins: ['@babel/syntax-optional-chaining']
     },

@@ -69,6 +69,9 @@ export default {
         this.$store.commit('M_NEW_MESSAGE', value)
       }
     }
+  },
+  mounted () {
+    this.$vuetify.goTo('#msgBox', { duration: 800 })
   }
 }
 </script>
