@@ -93,7 +93,7 @@ export default {
         query: getMessages,
         variables: {
           chat: 'chat',
-          last: 100
+          last: 200
         }
       })
       if (res.data?.getMessages?.ok) {
